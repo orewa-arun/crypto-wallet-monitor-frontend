@@ -1,12 +1,10 @@
 import React, { useState } from "react";
 import { auth } from "../auth/firebase/config";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { useAuth } from "../hooks/useAuth";
 
 const provider = new GoogleAuthProvider();
 
 const LandingPage: React.FC = () => {
-  const { user, loading } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [loginLoading, setLoginLoading] = useState(false);
 
@@ -25,51 +23,6 @@ const LandingPage: React.FC = () => {
       setLoginLoading(false);
     }
   };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-          <p className="text-white text-lg">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (user) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 flex items-center justify-center">
-        <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 shadow-2xl border border-white/20 max-w-md w-full mx-4">
-          <div className="text-center">
-            <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mx-auto mb-6 flex items-center justify-center">
-              <span className="text-2xl font-bold text-white">
-                {user.displayName?.charAt(0) || user.email?.charAt(0) || "U"}
-              </span>
-            </div>
-            <h2 className="text-2xl font-bold text-white mb-2">
-              Welcome back, {user.displayName || "User"}!
-            </h2>
-            <p className="text-gray-300 mb-6">
-              You're successfully signed in to Crypto Wallet Monitor
-            </p>
-            <div className="space-y-3">
-              <div className="bg-white/5 rounded-lg p-3">
-                <p className="text-sm text-gray-400">Email</p>
-                <p className="text-white font-medium">{user.email}</p>
-              </div>
-              <button
-                onClick={() => auth.signOut()}
-                className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 transform hover:scale-105"
-              >
-                Sign Out
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 flex items-center justify-center p-4">
