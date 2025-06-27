@@ -46,12 +46,13 @@ const Dashboard: React.FC = () => {
     setSuccess(null);
 
     try {
-      const response = await authenticatedAPIClient.post("/monitor-wallet", {
+      const response = await authenticatedAPIClient.post("/add-wallet", {
         address: walletAddress.trim()
       });
 
-      setSuccess(`Successfully added ${walletAddress} to monitoring! ${response.data.transactions_found} transactions found.`);
+      setSuccess(`Successfully added ${walletAddress} to monitoring!`);
       setWalletAddress("");
+      console.log(response.data);
       
       // Refresh the list of monitored addresses
       await fetchMonitoredAddresses();
