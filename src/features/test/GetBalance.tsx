@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import apiClient from "../../auth/firebase/authenticatedAPIClient";
+import { getTestBalance } from "../../api";
 
 const GetBalance: React.FC = () => {
   const [balance, setBalance] = useState<number | null>(null);
@@ -10,8 +10,8 @@ const GetBalance: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await apiClient.get("/test/balance");
-      setBalance(response.data.amount);
+      const response = await getTestBalance();
+      setBalance(response.amount);
     } catch (err) {
       if (err && typeof err === "object" && "response" in err) {
         const axiosError = err as { response?: { data?: { detail?: string } } };

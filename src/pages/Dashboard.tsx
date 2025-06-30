@@ -1,17 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { auth } from "../auth/firebase/config";
 import { useAuth } from "../hooks/useAuth";
-import authenticatedAPIClient from "../auth/firebase/authenticatedAPIClient";
-import { Plus, Trash2, Wallet, AlertCircle, CheckCircle, Loader2 } from "lucide-react";
-
-interface MonitoredAddress {
-  crypto_address: string;
-  created_at?: string;
-}
+import { Plus, Trash2, Wallet, AlertCircle, CheckCircle, Loader2, Bell } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { 
+  fetchMonitoredAddresses, 
+  addWalletToMonitoring, 
+  removeWalletFromMonitoring,
+  type MonitoredAddress 
+} from "../api";
+import DashboardMenu from "../components/DashboardMenu";
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [walletAddress, setWalletAddress] = useState("");
+  const [walletAlias, setWalletAlias] = useState("");
   const [monitoredAddresses, setMonitoredAddresses] = useState<MonitoredAddress[]>([]);
   const [loading, setLoading] = useState(false);
   const [addressesLoading, setAddressesLoading] = useState(true);
@@ -21,14 +25,14 @@ const Dashboard: React.FC = () => {
 
   // Fetch monitored addresses on component mount
   useEffect(() => {
-    fetchMonitoredAddresses();
+    fetchMonitoredAddressesData();
   }, []);
 
-  const fetchMonitoredAddresses = async () => {
+  const fetchMonitoredAddressesData = async () => {
     try {
       setAddressesLoading(true);
-      const response = await authenticatedAPIClient.get("/monitored-addresses");
-      setMonitoredAddresses(response.data.monitored_addresses || []);
+      const response = await fetchMonitoredAddresses();
+      setMonitoredAddresses(response.monitored_addresses || []);
     } catch (err) {
       console.error("Error fetching monitored addresses:", err);
       setError("Failed to fetch monitored addresses");
@@ -39,23 +43,22 @@ const Dashboard: React.FC = () => {
 
   const handleAddWallet = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!walletAddress.trim()) return;
+    if (!walletAddress.trim() || !walletAlias.trim()) return;
 
     setLoading(true);
     setError(null);
     setSuccess(null);
 
     try {
-      const response = await authenticatedAPIClient.post("/add-wallet", {
-        address: walletAddress.trim()
-      });
+      const response = await addWalletToMonitoring(walletAddress, walletAlias);
 
-      setSuccess(`Successfully added ${walletAddress} to monitoring!`);
+      setSuccess(`Successfully added ${walletAlias} (${walletAddress}) to monitoring!`);
       setWalletAddress("");
-      console.log(response.data);
+      setWalletAlias("");
+      console.log(response);
       
       // Refresh the list of monitored addresses
-      await fetchMonitoredAddresses();
+      await fetchMonitoredAddressesData();
     } catch (err: unknown) {
       console.error("Error adding wallet:", err);
       const errorMessage = err instanceof Error ? err.message : "Failed to add wallet to monitoring";
@@ -70,7 +73,7 @@ const Dashboard: React.FC = () => {
     setError(null);
 
     try {
-      await authenticatedAPIClient.delete(`/monitored-addresses/${address}`);
+      await removeWalletFromMonitoring(address);
       setSuccess(`Successfully removed ${address} from monitoring`);
       
       // Update the local state
@@ -102,7 +105,7 @@ const Dashboard: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900">
       {/* Header */}
-      <div className="bg-white/10 backdrop-blur-lg border-b border-white/20">
+      <div className="bg-white/10 backdrop-blur-lg border-b border-white/20 relative z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-3">
@@ -114,19 +117,25 @@ const Dashboard: React.FC = () => {
                 <p className="text-white text-sm">{user.displayName || user.email}</p>
                 <p className="text-gray-300 text-xs">{user.email}</p>
               </div>
+              
+              {/* Subscription Settings Button */}
               <button
-                onClick={handleSignOut}
-                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition duration-200"
+                onClick={() => navigate('/notification-settings')}
+                className="flex items-center space-x-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition duration-200"
+                title="Notification Settings"
               >
-                Sign Out
+                <Bell className="w-4 h-4" />
+                <span className="text-sm font-medium">Notifications</span>
               </button>
+              
+              <DashboardMenu onSignOut={handleSignOut} />
             </div>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Add Wallet Form */}
           <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
@@ -136,6 +145,21 @@ const Dashboard: React.FC = () => {
             </h2>
             
             <form onSubmit={handleAddWallet} className="space-y-4">
+              <div>
+                <label htmlFor="walletAlias" className="block text-sm font-medium text-gray-300 mb-2">
+                  Wallet Alias
+                </label>
+                <input
+                  type="text"
+                  id="walletAlias"
+                  value={walletAlias}
+                  onChange={(e) => setWalletAlias(e.target.value)}
+                  placeholder="My Main Wallet"
+                  className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  disabled={loading}
+                />
+              </div>
+              
               <div>
                 <label htmlFor="walletAddress" className="block text-sm font-medium text-gray-300 mb-2">
                   Ethereum Wallet Address
@@ -153,7 +177,7 @@ const Dashboard: React.FC = () => {
               
               <button
                 type="submit"
-                disabled={loading || !walletAddress.trim()}
+                disabled={loading || !walletAddress.trim() || !walletAlias.trim()}
                 className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center"
               >
                 {loading ? (
@@ -212,9 +236,19 @@ const Dashboard: React.FC = () => {
                     className="flex items-center justify-between p-4 bg-white/5 rounded-lg border border-white/10"
                   >
                     <div className="flex-1 min-w-0">
-                      <p className="text-white font-mono text-sm truncate">
-                        {address.crypto_address}
-                      </p>
+                      <div className="flex items-center space-x-2">
+                        <p className="text-white font-medium">
+                          {address.alias || "Unnamed Wallet"}
+                        </p>
+                        {address.alias && (
+                          <span className="text-gray-400 text-xs">({address.crypto_address.slice(0, 8)}...{address.crypto_address.slice(-6)})</span>
+                        )}
+                      </div>
+                      {!address.alias && (
+                        <p className="text-white font-mono text-sm truncate">
+                          {address.crypto_address}
+                        </p>
+                      )}
                       {address.created_at && (
                         <p className="text-gray-400 text-xs mt-1">
                           Added: {new Date(address.created_at).toLocaleDateString()}

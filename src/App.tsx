@@ -2,6 +2,8 @@ import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import Dashboard from "./pages/Dashboard";
+import NotificationSubscription from "./pages/NotificationSubscription";
+import ContactBook from "./pages/ContactBook";
 import { useAuth } from "./hooks/useAuth";
 
 const App: React.FC = () => {
@@ -27,6 +29,14 @@ const App: React.FC = () => {
       <Route
         path="/dashboard"
         element={user ? <Dashboard /> : <Navigate to="/" replace />}
+      />
+      <Route
+        path="/notification-settings"
+        element={user ? <NotificationSubscription /> : <Navigate to="/" replace />}
+      />
+      <Route
+        path="/contact-book"
+        element={user ? <ContactBook /> : <Navigate to="/" replace />}
       />
     </Routes>
   );
