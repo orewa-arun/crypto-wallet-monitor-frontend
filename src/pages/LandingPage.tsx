@@ -1,17 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { auth } from "../auth/firebase/config";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import Web3Auth from "../components/Web3Auth";
 import { useAuth } from "../hooks/useAuth";
 import type { Web3User } from "../auth/web3/web3AuthService";
 
+
 const provider = new GoogleAuthProvider();
 
 const LandingPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [loginLoading, setLoginLoading] = useState(false);
   const [authMethod, setAuthMethod] = useState<'google' | 'wallet'>('google');
-  const { setWeb3Auth } = useAuth();
+  const { user, setWeb3Auth } = useAuth();
+
+  // Debug: Monitor when user becomes authenticated
+  useEffect(() => {
+    if (user) {
+      console.log('User authenticated, should redirect to dashboard:', user);
+    }
+  }, [user]);
 
   const loginWithGoogle = async () => {
     setError(null);
@@ -30,7 +39,11 @@ const LandingPage: React.FC = () => {
   };
 
   const handleWeb3Success = (user: Web3User, token: string) => {
+    console.log('Web3 authentication successful, setting auth state...');
+    setError(null);
+    setSuccess(`Successfully connected wallet: ${user.walletAddress.slice(0, 6)}...${user.walletAddress.slice(-4)}`);
     setWeb3Auth(user, token);
+    console.log('Auth state updated, should redirect to dashboard');
   };
 
   const handleWeb3Error = (error: string) => {
@@ -166,6 +179,18 @@ const LandingPage: React.FC = () => {
             {error && (
               <div className="mt-4 p-4 bg-red-500/20 border border-red-500/30 rounded-lg">
                 <p className="text-red-300 text-sm">{error}</p>
+              </div>
+            )}
+
+            {success && (
+              <div className="mt-4 p-4 bg-green-500/20 border border-green-500/30 rounded-lg">
+                <p className="text-green-300 text-sm mb-3">{success}</p>
+                <button
+                  onClick={() => window.location.href = '/dashboard'}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200"
+                >
+                  Go to Dashboard
+                </button>
               </div>
             )}
 

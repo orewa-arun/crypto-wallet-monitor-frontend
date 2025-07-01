@@ -1,5 +1,5 @@
-import React from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Routes, Route, Navigate, useNavigate, useLocation } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import Dashboard from "./pages/Dashboard";
 import NotificationSubscription from "./pages/NotificationSubscription";
@@ -7,7 +7,23 @@ import ContactBook from "./pages/ContactBook";
 import { useAuth } from "./hooks/useAuth";
 
 const App: React.FC = () => {
-  const { user, loading } = useAuth();
+  const { user, loading, authMethod } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Debug: Log auth state changes
+  console.log('App: Auth state changed - user:', user ? 'authenticated' : 'not authenticated', 'method:', authMethod, 'loading:', loading);
+  if (user) {
+    console.log('App: User details:', user);
+  }
+
+  // Force redirect when user becomes authenticated and we're on the landing page
+  useEffect(() => {
+    if (user && location.pathname === '/') {
+      console.log('App: User authenticated on landing page, redirecting to dashboard...');
+      navigate('/dashboard', { replace: true });
+    }
+  }, [user, location.pathname, navigate]);
 
   if (loading) {
     return (
