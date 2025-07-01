@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { auth } from "../auth/firebase/config";
 import { useAuth } from "../hooks/useAuth";
 import { Plus, Trash2, Wallet, AlertCircle, CheckCircle, Loader2, Bell } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -12,7 +11,7 @@ import {
 import DashboardMenu from "../components/DashboardMenu";
 
 const Dashboard: React.FC = () => {
-  const { user } = useAuth();
+  const { user, authMethod, logout } = useAuth();
   const navigate = useNavigate();
   const [walletAddress, setWalletAddress] = useState("");
   const [walletAlias, setWalletAlias] = useState("");
@@ -88,7 +87,7 @@ const Dashboard: React.FC = () => {
   };
 
   const handleSignOut = () => {
-    auth.signOut();
+    logout();
   };
 
   if (!user) {
@@ -114,8 +113,22 @@ const Dashboard: React.FC = () => {
             </div>
             <div className="flex items-center space-x-4">
               <div className="text-right">
-                <p className="text-white text-sm">{user.displayName || user.email}</p>
-                <p className="text-gray-300 text-xs">{user.email}</p>
+                <p className="text-white text-sm">
+                  {authMethod === 'firebase' && 'displayName' in user 
+                    ? (user.displayName || user.email) 
+                    : authMethod === 'web3' && 'walletAddress' in user
+                    ? `${user.walletAddress.slice(0, 6)}...${user.walletAddress.slice(-4)}`
+                    : 'User'
+                  }
+                </p>
+                <p className="text-gray-300 text-xs">
+                  {authMethod === 'firebase' && 'email' in user 
+                    ? user.email 
+                    : authMethod === 'web3' && 'walletAddress' in user
+                    ? user.walletAddress
+                    : ''
+                  }
+                </p>
               </div>
               
               {/* Subscription Settings Button */}
