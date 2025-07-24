@@ -10,7 +10,7 @@ import type {
 
 // Fetch all monitored addresses for the current user
 export const fetchMonitoredAddresses = async (): Promise<MonitoredAddressesResponse> => {
-  const response = await authenticatedAPIClient.get("/monitored-addresses");
+  const response = await authenticatedAPIClient.get("/my-addresses");
   return response.data;
 };
 
@@ -25,7 +25,7 @@ export const addWalletToMonitoring = async (address: string, alias: string): Pro
 
 // Update alias for a monitored address
 export const updateWalletAlias = async (address: string, alias: string): Promise<UpdateAliasResponse> => {
-  const response = await authenticatedAPIClient.put(`/addresses/${address}/alias`, {
+  const response = await authenticatedAPIClient.put(`/monitored-addresses/${address}/alias`, {
     alias: alias.trim()
   });
   return response.data;
