@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
   ArrowLeft, 
-  Plus, 
+  // Plus, 
   Trash2, 
-  Mail, 
-  Phone, 
+  // Mail, 
+  // Phone, 
   MessageCircle, 
   Settings, 
   CheckCircle, 
@@ -18,19 +18,19 @@ import {
 } from "lucide-react";
 import {
   getSubscriptionInfo,
-  addSubscriptionEmail,
-  removeSubscriptionEmail,
-  addSubscriptionPhone,
-  removeSubscriptionPhone,
+  // addSubscriptionEmail,
+  // removeSubscriptionEmail,
+  // addSubscriptionPhone,
+  // removeSubscriptionPhone,
   removeTelegramChat,
   updateSubscriptionSettings,
   testTelegram,
-  setPrimaryEmail,
-  setPrimaryPhone,
+  // setPrimaryEmail,
+  // setPrimaryPhone,
   setPrimaryTelegram,
   type SubscriptionInfo,
-  type SubscriptionEmail,
-  type SubscriptionPhone,
+  // type SubscriptionEmail,
+  // type SubscriptionPhone,
   type TelegramChat
 } from "../api";
 import TelegramConnectModal from "../components/TelegramConnectModal";
@@ -49,10 +49,10 @@ const NotificationSubscription: React.FC = () => {
   const [showTelegramModal, setShowTelegramModal] = useState(false);
 
   // Form states
-  const [newEmail, setNewEmail] = useState("");
-  const [newPhone, setNewPhone] = useState("");
-  const [isAddingEmail, setIsAddingEmail] = useState(false);
-  const [isAddingPhone, setIsAddingPhone] = useState(false);
+  // const [newEmail, setNewEmail] = useState("");
+  // const [newPhone, setNewPhone] = useState("");
+  // const [isAddingEmail, setIsAddingEmail] = useState(false);
+  // const [isAddingPhone, setIsAddingPhone] = useState(false);
   const [removingItem, setRemovingItem] = useState<string | null>(null);
   const [settingPrimary, setSettingPrimary] = useState<string | null>(null);
 
@@ -117,99 +117,99 @@ const NotificationSubscription: React.FC = () => {
     }
   };
 
-  const handleAddEmail = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newEmail.trim()) return;
+  // const handleAddEmail = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   if (!newEmail.trim()) return;
 
-    try {
-      setIsAddingEmail(true);
-      const isPrimary = subscriptionInfo?.emails.length === 0;
-      await addSubscriptionEmail(newEmail.trim(), isPrimary);
-      setNewEmail("");
-      await fetchSubscriptionInfo();
-      addToast('success', "Email added successfully");
-    } catch (err) {
-      console.error("Error adding email:", err);
-      addToast('error', "Failed to add email");
-    } finally {
-      setIsAddingEmail(false);
-    }
-  };
+  //   try {
+  //     setIsAddingEmail(true);
+  //     const isPrimary = subscriptionInfo?.emails.length === 0;
+  //     await addSubscriptionEmail(newEmail.trim(), isPrimary);
+  //     setNewEmail("");
+  //     await fetchSubscriptionInfo();
+  //     addToast('success', "Email added successfully");
+  //   } catch (err) {
+  //     console.error("Error adding email:", err);
+  //     addToast('error', "Failed to add email");
+  //   } finally {
+  //     setIsAddingEmail(false);
+  //   }
+  // };
 
-  const handleRemoveEmail = async (email: string) => {
-    try {
-      setRemovingItem(`email-${email}`);
-      await removeSubscriptionEmail(email);
-      await fetchSubscriptionInfo();
-      addToast('success', "Email removed successfully");
-    } catch (err) {
-      console.error("Error removing email:", err);
-      addToast('error', "Failed to remove email");
-    } finally {
-      setRemovingItem(null);
-    }
-  };
+  // const handleRemoveEmail = async (email: string) => {
+  //   try {
+  //     setRemovingItem(`email-${email}`);
+  //     await removeSubscriptionEmail(email);
+  //     await fetchSubscriptionInfo();
+  //     addToast('success', "Email removed successfully");
+  //   } catch (err) {
+  //     console.error("Error removing email:", err);
+  //     addToast('error', "Failed to remove email");
+  //   } finally {
+  //     setRemovingItem(null);
+  //   }
+  // };
 
-  const handleSetPrimaryEmail = async (email: string) => {
-    try {
-      setSettingPrimary(`email-${email}`);
-      await setPrimaryEmail(email);
-      await fetchSubscriptionInfo();
-      addToast('success', "Primary email updated successfully");
-    } catch (err) {
-      console.error("Error setting primary email:", err);
-      addToast('error', "Failed to set primary email");
-    } finally {
-      setSettingPrimary(null);
-    }
-  };
+  // const handleSetPrimaryEmail = async (email: string) => {
+  //   try {
+  //     setSettingPrimary(`email-${email}`);
+  //     await setPrimaryEmail(email);
+  //     await fetchSubscriptionInfo();
+  //     addToast('success', "Primary email updated successfully");
+  //   } catch (err) {
+  //     console.error("Error setting primary email:", err);
+  //     addToast('error', "Failed to set primary email");
+  //   } finally {
+  //     setSettingPrimary(null);
+  //   }
+  // };
 
-  const handleAddPhone = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newPhone.trim()) return;
+  // const handleAddPhone = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   if (!newPhone.trim()) return;
 
-    try {
-      setIsAddingPhone(true);
-      const isPrimary = subscriptionInfo?.phones.length === 0;
-      await addSubscriptionPhone(newPhone.trim(), isPrimary);
-      setNewPhone("");
-      await fetchSubscriptionInfo();
-      addToast('success', "Phone number added successfully");
-    } catch (err) {
-      console.error("Error adding phone:", err);
-      addToast('error', "Failed to add phone number");
-    } finally {
-      setIsAddingPhone(false);
-    }
-  };
+  //   try {
+  //     setIsAddingPhone(true);
+  //     const isPrimary = subscriptionInfo?.phones.length === 0;
+  //     await addSubscriptionPhone(newPhone.trim(), isPrimary);
+  //     setNewPhone("");
+  //     await fetchSubscriptionInfo();
+  //     addToast('success', "Phone number added successfully");
+  //   } catch (err) {
+  //     console.error("Error adding phone:", err);
+  //     addToast('error', "Failed to add phone number");
+  //   } finally {
+  //     setIsAddingPhone(false);
+  //   }
+  // };
 
-  const handleRemovePhone = async (phone: string) => {
-    try {
-      setRemovingItem(`phone-${phone}`);
-      await removeSubscriptionPhone(phone);
-      await fetchSubscriptionInfo();
-      addToast('success', "Phone number removed successfully");
-    } catch (err) {
-      console.error("Error removing phone:", err);
-      addToast('error', "Failed to remove phone number");
-    } finally {
-      setRemovingItem(null);
-    }
-  };
+  // const handleRemovePhone = async (phone: string) => {
+  //   try {
+  //     setRemovingItem(`phone-${phone}`);
+  //     await removeSubscriptionPhone(phone);
+  //     await fetchSubscriptionInfo();
+  //     addToast('success', "Phone number removed successfully");
+  //   } catch (err) {
+  //     console.error("Error removing phone:", err);
+  //     addToast('error', "Failed to remove phone number");
+  //   } finally {
+  //     setRemovingItem(null);
+  //   }
+  // };
 
-  const handleSetPrimaryPhone = async (phone: string) => {
-    try {
-      setSettingPrimary(`phone-${phone}`);
-      await setPrimaryPhone(phone);
-      await fetchSubscriptionInfo();
-      addToast('success', "Primary phone number updated successfully");
-    } catch (err) {
-      console.error("Error setting primary phone:", err);
-      addToast('error', "Failed to set primary phone number");
-    } finally {
-      setSettingPrimary(null);
-    }
-  };
+  // const handleSetPrimaryPhone = async (phone: string) => {
+  //   try {
+  //     setSettingPrimary(`phone-${phone}`);
+  //     await setPrimaryPhone(phone);
+  //     await fetchSubscriptionInfo();
+  //     addToast('success', "Primary phone number updated successfully");
+  //   } catch (err) {
+  //     console.error("Error setting primary phone:", err);
+  //     addToast('error', "Failed to set primary phone number");
+  //   } finally {
+  //     setSettingPrimary(null);
+  //   }
+  // };
 
   const handleRemoveTelegram = async (chatId: string) => {
     try {
@@ -254,15 +254,15 @@ const NotificationSubscription: React.FC = () => {
     addToast('success', "Telegram account connected successfully!");
   };
 
-  const canRemoveEmail = (email: SubscriptionEmail) => {
-    if (subscriptionInfo?.emails.length === 1) return true;
-    return !email.is_primary;
-  };
+  // const canRemoveEmail = (email: SubscriptionEmail) => {
+  //   if (subscriptionInfo?.emails.length === 1) return true;
+  //   return !email.is_primary;
+  // };
 
-  const canRemovePhone = (phone: SubscriptionPhone) => {
-    if (subscriptionInfo?.phones.length === 1) return true;
-    return !phone.is_primary;
-  };
+  // const canRemovePhone = (phone: SubscriptionPhone) => {
+  //   if (subscriptionInfo?.phones.length === 1) return true;
+  //   return !phone.is_primary;
+  // };
 
   const canRemoveTelegram = (chat: TelegramChat) => {
     if (subscriptionInfo?.telegram_subscriptions.length === 1) return true;
