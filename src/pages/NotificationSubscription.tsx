@@ -345,7 +345,7 @@ const NotificationSubscription: React.FC = () => {
                 <Settings className="w-5 h-5 mr-2" />
                 Notification Services
               </h2>
-              
+{/*               
               <div className="space-y-4">
                 <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
                   <div className="flex items-center">
@@ -389,7 +389,7 @@ const NotificationSubscription: React.FC = () => {
                       }`}
                     />
                   </button>
-                </div>
+                </div> */}
 
                 <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
                   <div className="flex items-center">
@@ -413,17 +413,17 @@ const NotificationSubscription: React.FC = () => {
                   </button>
                 </div>
               </div>
-            </div>
+            {/* </div> */}
 
             {/* Email Management */}
-            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
+            {/* <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
               <h2 className="text-xl font-semibold text-white mb-6 flex items-center">
                 <Mail className="w-5 h-5 mr-2" />
                 Email Addresses
               </h2>
               
               {/* Add Email Form */}
-              <form onSubmit={handleAddEmail} className="mb-6">
+              {/* <form onSubmit={handleAddEmail} className="mb-6">
                 <div className="flex space-x-3">
                   <input
                     type="email"
@@ -445,10 +445,10 @@ const NotificationSubscription: React.FC = () => {
                     )}
                   </button>
                 </div>
-              </form>
+              </form>  */}
 
               {/* Email List */}
-              <div className="space-y-3">
+              {/* <div className="space-y-3">
                 {subscriptionInfo.emails.map((email) => (
                   <div
                     key={email.email}
@@ -524,17 +524,17 @@ const NotificationSubscription: React.FC = () => {
                   </div>
                 )}
               </div>
-            </div>
+            </div> */}
 
             {/* Phone Management */}
-            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
+            {/* <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
               <h2 className="text-xl font-semibold text-white mb-6 flex items-center">
                 <Phone className="w-5 h-5 mr-2" />
                 Phone Numbers
-              </h2>
+              </h2> */}
               
               {/* Add Phone Form */}
-              <form onSubmit={handleAddPhone} className="mb-6">
+              {/* <form onSubmit={handleAddPhone} className="mb-6">
                 <div className="flex space-x-3">
                   <input
                     type="tel"
@@ -556,10 +556,10 @@ const NotificationSubscription: React.FC = () => {
                     )}
                   </button>
                 </div>
-              </form>
+              </form> */}
 
               {/* Phone List */}
-              <div className="space-y-3">
+              {/* <div className="space-y-3">
                 {subscriptionInfo.phones.map((phone) => (
                   <div
                     key={phone.phone_number}
@@ -618,7 +618,7 @@ const NotificationSubscription: React.FC = () => {
                   </div>
                 )}
               </div>
-            </div>
+            </div> */}
 
             {/* Telegram Management */}
             <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">

@@ -145,8 +145,12 @@ const Dashboard: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-3">
-              <Wallet className="w-8 h-8 text-white" />
-              <h1 className="text-2xl font-bold text-white">Crypto Wallet Monitor</h1>
+              <img 
+                src="/cryptoRooster.png" 
+                alt="CryptoRooster Logo" 
+                className="w-8 h-8 object-contain"
+              />
+              <h1 className="text-2xl font-bold text-white">CryptoRooster</h1>
             </div>
             <div className="flex items-center space-x-4">
               <div className="text-right">

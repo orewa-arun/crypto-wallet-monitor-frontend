@@ -55,12 +55,16 @@ const LandingPage: React.FC = () => {
       <div className="max-w-4xl w-full">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-5xl md:text-6xl font-bold text-white mb-4">
-            Crypto Wallet
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
-              Monitor
-            </span>
-          </h1>
+          <div className="flex flex-col items-center justify-center mb-6">
+            <img 
+              src="/cryptoRooster.png" 
+              alt="CryptoRooster Logo" 
+              className="w-16 h-16 md:w-20 md:h-20 object-contain mb-4"
+            />
+            <h1 className="text-5xl md:text-6xl font-bold text-white">
+              CryptoRooster
+            </h1>
+          </div>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
             Get instant email and SMS notifications for every deposit, withdrawal, 
             and transaction on your crypto wallet addresses.
@@ -117,8 +121,15 @@ const LandingPage: React.FC = () => {
 
           {/* Right Side - Sign In */}
           <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 shadow-2xl border border-white/20">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-white mb-2">Get Started</h2>
+            <div className="flex justify-between items-center py-8">
+              <div className="flex items-center space-x-3">
+                <img 
+                  src="/cryptoRooster.png" 
+                  alt="CryptoRooster Logo" 
+                  className="w-10 h-10 object-contain"
+                />
+                <h1 className="text-3xl font-bold text-white">CryptoRooster</h1>
+              </div>
               <p className="text-gray-300">
                 Choose your preferred authentication method
               </p>
@@ -212,7 +223,7 @@ const LandingPage: React.FC = () => {
         {/* Footer */}
         <div className="text-center mt-16">
           <p className="text-gray-400 text-sm">
-            © 2024 Crypto Wallet Monitor. All rights reserved.
+            © 2024 CryptoRooster. All rights reserved.
           </p>
         </div>
       </div>
