@@ -25,6 +25,7 @@ const Dashboard: React.FC = () => {
   const [editingAddress, setEditingAddress] = useState<string | null>(null);
   const [editingAlias, setEditingAlias] = useState("");
   const [savingAddress, setSavingAddress] = useState<string | null>(null);
+  const [isSigningOut, setIsSigningOut] = useState(false);
 
   // Fetch monitored addresses on component mount
   useEffect(() => {
@@ -127,26 +128,122 @@ const Dashboard: React.FC = () => {
     console.log("Sign out button clicked");
     console.log("Current user before logout:", user);
     console.log("Auth method before logout:", authMethod);
+    console.log("Logout function type:", typeof logout);
+    
+    if (isSigningOut) {
+      console.log("Already signing out, ignoring click");
+      return;
+    }
     
     try {
-      // Add loading state or confirmation if needed
+      setIsSigningOut(true);
+      
+      // Optional confirmation - remove this if you want instant logout
       const confirmLogout = window.confirm("Are you sure you want to sign out?");
       if (!confirmLogout) {
         console.log("User cancelled logout");
+        setIsSigningOut(false);
         return;
       }
       
-      console.log("Calling logout function...");
-      await logout();
-      console.log("Logout function completed");
+      console.log("Clearing local state...");
+      // Clear all local state immediately
+      setMonitoredAddresses([]);
+      setWalletAddress("");
+      setWalletAlias("");
+      setError(null);
+      setSuccess(null);
+      setEditingAddress(null);
+      setEditingAlias("");
       
-      // Force navigation to landing page
+      console.log("Performing logout based on auth method:", authMethod);
+      
+      if (authMethod === 'firebase') {
+        // For Firebase, we need to sign out from Firebase directly
+        console.log("Signing out from Firebase...");
+        const { signOut } = await import('firebase/auth');
+        const { auth } = await import('../auth/firebase/config');
+        await signOut(auth);
+        console.log("Firebase signOut completed");
+      } else if (authMethod === 'web3') {
+        // For Web3, clear session storage
+        console.log("Clearing Web3 session storage...");
+        sessionStorage.removeItem('web3_token');
+        sessionStorage.removeItem('web3_user');
+      }
+      
+      // Call the global logout
+      console.log("Calling globalAuthState logout...");
+      logout();
+      
+      console.log("Logout function called, waiting for state update...");
+      
+      // Wait a bit longer for the auth state to update
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
       console.log("Navigating to landing page...");
-      navigate('/', { replace: true });
+      
+      // Force navigation immediately - don't wait for React Router
+      window.location.href = '/';
       
     } catch (error) {
       console.error("Error during logout:", error);
       setError("Failed to sign out. Please try again.");
+      
+      // Emergency fallback - force page reload to clear everything
+      setTimeout(() => {
+        console.log("Emergency fallback - reloading page");
+        window.location.reload();
+      }, 1000);
+    } finally {
+      // Reset the signing out state after a delay
+      setTimeout(() => {
+        setIsSigningOut(false);
+      }, 2000);
+    }
+  };
+
+  // Alternative simpler logout without confirmation
+  const handleSignOutDirect = async () => {
+    console.log("Direct sign out initiated");
+    
+    if (isSigningOut) return;
+    
+    try {
+      setIsSigningOut(true);
+      
+      // Clear local state
+      setMonitoredAddresses([]);
+      setWalletAddress("");
+      setWalletAlias("");
+      setError(null);
+      setSuccess(null);
+      
+      console.log("Direct logout - auth method:", authMethod);
+      
+      if (authMethod === 'firebase') {
+        // For Firebase, sign out directly
+        const { signOut } = await import('firebase/auth');
+        const { auth } = await import('../auth/firebase/config');
+        await signOut(auth);
+        console.log("Firebase direct signOut completed");
+      } else if (authMethod === 'web3') {
+        // For Web3, clear session storage
+        sessionStorage.removeItem('web3_token');
+        sessionStorage.removeItem('web3_user');
+        console.log("Web3 session storage cleared");
+      }
+      
+      // Call global logout
+      logout();
+      
+      // Force navigation immediately
+      window.location.href = '/';
+      
+    } catch (error) {
+      console.error("Direct logout error:", error);
+      // Force page reload as ultimate fallback
+      window.location.reload();
     }
   };
 
@@ -203,6 +300,20 @@ const Dashboard: React.FC = () => {
               >
                 <Bell className="w-4 h-4" />
                 <span className="text-sm font-medium">Notifications</span>
+              </button>
+              
+              {/* Debug: Direct Sign Out Button (remove after testing) */}
+              <button
+                onClick={handleSignOutDirect}
+                disabled={isSigningOut}
+                className="flex items-center space-x-2 px-4 py-2 bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white rounded-lg transition duration-200"
+                title="Direct Sign Out (Debug)"
+              >
+                {isSigningOut ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <span className="text-sm font-medium">Direct Logout</span>
+                )}
               </button>
               
               <DashboardMenu onSignOut={handleSignOut} />

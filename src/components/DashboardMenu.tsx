@@ -39,18 +39,43 @@ const DashboardMenu: React.FC<DashboardMenuProps> = ({ onSignOut }) => {
   };
 
   const handleNotificationSettings = () => {
+    console.log("Notification settings clicked");
     setIsOpen(false);
     navigate("/notification-settings");
   };
 
   const handleContactBook = () => {
+    console.log("Contact book clicked");
     setIsOpen(false);
     navigate("/contact-book");
   };
 
-  const handleSignOut = () => {
-    setIsOpen(false);
-    onSignOut();
+  const handleSignOut = async () => {
+    console.log("Sign out clicked in DashboardMenu");
+    console.log("onSignOut prop exists:", typeof onSignOut === 'function');
+    
+    try {
+      setIsOpen(false);
+      
+      // Add loading state or visual feedback
+      const signOutButton = document.querySelector('[data-signout-button]');
+      if (signOutButton) {
+        signOutButton.textContent = 'Signing out...';
+      }
+      
+      console.log("Calling onSignOut function...");
+      await onSignOut();
+      console.log("onSignOut function completed");
+      
+    } catch (error) {
+      console.error("Error in handleSignOut:", error);
+      
+      // Reset button text on error
+      const signOutButton = document.querySelector('[data-signout-button]');
+      if (signOutButton) {
+        signOutButton.textContent = 'Sign Out';
+      }
+    }
   };
 
   return (
@@ -100,6 +125,7 @@ const DashboardMenu: React.FC<DashboardMenuProps> = ({ onSignOut }) => {
             {/* Sign Out */}
             <button
               onClick={handleSignOut}
+              data-signout-button
               className="w-full flex items-center px-4 py-3 text-white hover:bg-white/20 transition duration-200"
             >
               <LogOut className="w-5 h-5 mr-3 text-red-400" />
@@ -112,4 +138,4 @@ const DashboardMenu: React.FC<DashboardMenuProps> = ({ onSignOut }) => {
   );
 };
 
-export default DashboardMenu; 
+export default DashboardMenu;
