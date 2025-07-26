@@ -31,6 +31,18 @@ const Dashboard: React.FC = () => {
     fetchMonitoredAddressesData();
   }, []);
 
+  // Add useEffect to monitor user state changes
+  useEffect(() => {
+    console.log("User state changed:", user);
+    console.log("Auth method:", authMethod);
+    
+    // If user becomes null, redirect to login
+    if (!user) {
+      console.log("No user found, should redirect to login");
+      navigate('/login', { replace: true });
+    }
+  }, [user, authMethod, navigate]);
+
   const fetchMonitoredAddressesData = async () => {
     try {
       setAddressesLoading(true);
@@ -123,8 +135,31 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  const handleSignOut = () => {
-    logout();
+  const handleSignOut = async () => {
+    console.log("Sign out button clicked");
+    console.log("Current user before logout:", user);
+    console.log("Auth method before logout:", authMethod);
+    
+    try {
+      // Add loading state or confirmation if needed
+      const confirmLogout = window.confirm("Are you sure you want to sign out?");
+      if (!confirmLogout) {
+        console.log("User cancelled logout");
+        return;
+      }
+      
+      console.log("Calling logout function...");
+      await logout();
+      console.log("Logout function completed");
+      
+      // Force navigation to login page
+      console.log("Navigating to login page...");
+      navigate('/login', { replace: true });
+      
+    } catch (error) {
+      console.error("Error during logout:", error);
+      setError("Failed to sign out. Please try again.");
+    }
   };
 
   if (!user) {
@@ -363,4 +398,4 @@ const Dashboard: React.FC = () => {
   );
 };
 
-export default Dashboard; 
+export default Dashboard;
