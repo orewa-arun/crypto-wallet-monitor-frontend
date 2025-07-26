@@ -1,15 +1,14 @@
-import React, { useEffect } from "react";
-import { Routes, Route, Navigate, useNavigate, useLocation } from "react-router-dom";
+import React from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import Dashboard from "./pages/Dashboard";
 import NotificationSubscription from "./pages/NotificationSubscription";
 import ContactBook from "./pages/ContactBook";
+import ProtectedRoute from "./components/ProtectedRoute";
 import { useAuth } from "./hooks/useAuth";
 
 const App: React.FC = () => {
   const { user, loading, authMethod } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
 
   // Debug: Log auth state changes
   console.log('App: Auth state changed - user:', user ? 'authenticated' : 'not authenticated', 'method:', authMethod, 'loading:', loading);
@@ -17,14 +16,7 @@ const App: React.FC = () => {
     console.log('App: User details:', user);
   }
 
-  // Force redirect when user becomes authenticated and we're on the landing page
-  useEffect(() => {
-    if (user && location.pathname === '/') {
-      console.log('App: User authenticated on landing page, redirecting to dashboard...');
-      navigate('/dashboard', { replace: true });
-    }
-  }, [user, location.pathname, navigate]);
-
+  // Show loading screen while authentication state is being determined
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 flex items-center justify-center">
@@ -44,16 +36,30 @@ const App: React.FC = () => {
       />
       <Route
         path="/dashboard"
-        element={user ? <Dashboard /> : <Navigate to="/" replace />}
+        element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        }
       />
       <Route
         path="/notification-settings"
-        element={user ? <NotificationSubscription /> : <Navigate to="/" replace />}
+        element={
+          <ProtectedRoute>
+            <NotificationSubscription />
+          </ProtectedRoute>
+        }
       />
       <Route
         path="/contact-book"
-        element={user ? <ContactBook /> : <Navigate to="/" replace />}
+        element={
+          <ProtectedRoute>
+            <ContactBook />
+          </ProtectedRoute>
+        }
       />
+      {/* Catch all route - redirect to landing page */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 };

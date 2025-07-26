@@ -3,8 +3,8 @@ import { auth } from "../auth/firebase/config";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import Web3Auth from "../components/Web3Auth";
 import { useAuth } from "../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 import type { Web3User } from "../auth/web3/web3AuthService";
-
 
 const provider = new GoogleAuthProvider();
 
@@ -14,20 +14,24 @@ const LandingPage: React.FC = () => {
   const [loginLoading, setLoginLoading] = useState(false);
   const [authMethod, setAuthMethod] = useState<'google' | 'wallet'>('google');
   const { user, setWeb3Auth } = useAuth();
+  const navigate = useNavigate();
 
-  // Debug: Monitor when user becomes authenticated
+  // Debug: Monitor authentication state
   useEffect(() => {
-    if (user) {
-      console.log('User authenticated, should redirect to dashboard:', user);
-    }
+    console.log('LandingPage - User state changed:', user);
+    // Don't auto-redirect here - let App.tsx handle it
   }, [user]);
 
   const loginWithGoogle = async () => {
     setError(null);
     setLoginLoading(true);
     try {
-      await signInWithPopup(auth, provider);
+      console.log('Attempting Google sign in...');
+      const result = await signInWithPopup(auth, provider);
+      console.log('Google sign in successful:', result.user);
+      // Don't manually navigate here - let the useEffect handle it
     } catch (err) {
+      console.error('Google sign in error:', err);
       if (err instanceof Error) {
         setError(err.message || "Failed to sign in");
       } else {
@@ -43,12 +47,21 @@ const LandingPage: React.FC = () => {
     setError(null);
     setSuccess(`Successfully connected wallet: ${user.walletAddress.slice(0, 6)}...${user.walletAddress.slice(-4)}`);
     setWeb3Auth(user, token);
-    console.log('Auth state updated, should redirect to dashboard');
+    console.log('Auth state updated, useEffect should handle redirect');
   };
 
   const handleWeb3Error = (error: string) => {
+    console.error('Web3 authentication error:', error);
     setError(error);
+    setSuccess(null);
   };
+
+  const handleGoToDashboard = () => {
+    navigate('/dashboard', { replace: true });
+  };
+
+  // Don't show loading screen here - let the user interact with the landing page
+  // Authentication state is handled at the App level
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 flex items-center justify-center p-4">
@@ -197,7 +210,7 @@ const LandingPage: React.FC = () => {
               <div className="mt-4 p-4 bg-green-500/20 border border-green-500/30 rounded-lg">
                 <p className="text-green-300 text-sm mb-3">{success}</p>
                 <button
-                  onClick={() => window.location.href = '/dashboard'}
+                  onClick={handleGoToDashboard}
                   className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200"
                 >
                   Go to Dashboard
@@ -231,4 +244,4 @@ const LandingPage: React.FC = () => {
   );
 };
 
-export default LandingPage; 
+export default LandingPage;

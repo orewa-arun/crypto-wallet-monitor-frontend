@@ -31,18 +31,6 @@ const Dashboard: React.FC = () => {
     fetchMonitoredAddressesData();
   }, []);
 
-  // Add useEffect to monitor user state changes
-  useEffect(() => {
-    console.log("User state changed:", user);
-    console.log("Auth method:", authMethod);
-    
-    // If user becomes null, redirect to login
-    if (!user) {
-      console.log("No user found, should redirect to login");
-      navigate('/login', { replace: true });
-    }
-  }, [user, authMethod, navigate]);
-
   const fetchMonitoredAddressesData = async () => {
     try {
       setAddressesLoading(true);
@@ -152,9 +140,9 @@ const Dashboard: React.FC = () => {
       await logout();
       console.log("Logout function completed");
       
-      // Force navigation to login page
-      console.log("Navigating to login page...");
-      navigate('/login', { replace: true });
+      // Force navigation to landing page
+      console.log("Navigating to landing page...");
+      navigate('/', { replace: true });
       
     } catch (error) {
       console.error("Error during logout:", error);
