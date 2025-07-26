@@ -312,7 +312,7 @@ const Dashboard: React.FC = () => {
                 {isSigningOut ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
-                  <span className="text-sm font-medium">Direct Logout</span>
+                  <span className="text-sm font-medium">Sign out</span>
                 )}
               </button>
               
